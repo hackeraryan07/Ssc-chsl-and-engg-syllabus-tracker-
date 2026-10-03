@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CHSL Prep Tracker</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f6f7fb;--card:#fff;--tx:#1b1f2a;--mut:#6b7280;--ac:#4f46e5;--ok:#16a34a;--warn:#dc2626;--bd:#e5e7eb}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1117;--card:#181b24;--tx:#e8eaf0;--mut:#9aa1b0;--ac:#818cf8;--ok:#4ade80;--warn:#f87171;--bd:#272b38}}
+:root[data-theme="dark"]{--bg:#0f1117;--card:#181b24;--tx:#e8eaf0;--mut:#9aa1b0;--ac:#818cf8;--ok:#4ade80;--warn:#f87171;--bd:#272b38}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+#app{max-width:640px;margin:0 auto;padding:12px 12px 90px}
+h1{font-size:18px;margin:4px 0 10px}h2{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);margin:16px 0 6px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.row{display:flex;gap:10px;align-items:flex-start;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;margin-bottom:6px}
+.row input{width:22px;height:22px;margin-top:1px;accent-color:var(--ok);flex:none}
+.row div{flex:1;min-width:0}.row small{display:block;color:var(--mut);font-size:12px}
+.row.dn b{text-decoration:line-through;color:var(--mut)}.row.od{border-left:4px solid var(--warn)}.row.rv{border-left:4px solid var(--ac)}
+.tag{font-size:11px;padding:1px 6px;border-radius:6px;background:var(--bd);color:var(--mut);margin-right:4px}
+.fl{background:none;border:0;font-size:18px;color:var(--mut);padding:0 2px}.fl.on{color:var(--warn)}
+.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.nav button,.btn{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:8px 14px;font-size:15px}
+.btn.p{background:var(--ac);color:#fff;border-color:var(--ac)}
+.bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin:4px 0 8px}.bar i{display:block;height:100%;background:var(--ok)}
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs button{flex:1;background:none;border:0;color:var(--mut);padding:12px 0;font-size:14px}.tabs button.on{color:var(--ac);font-weight:700}
+.red{color:var(--warn)}.grn{color:var(--ok)}textarea{width:100%;height:90px;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:8px;font-size:12px}
+.ln{padding:3px 0;font-size:14px}
+</style></head><body><div id="app"></div>
+<div class="tabs"><button data-v="today">Aaj</button><button data-v="next">Aage</button><button data-v="prog">Progress</button></div>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {initializeFirestore,persistentLocalCache,doc,setDoc,onSnapshot} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+// ====== APNA FIREBASE CONFIG YAHAN PASTE KARO ======
+const firebaseConfig={apiKey:"PASTE_API_KEY",authDomain:"PASTE_AUTH_DOMAIN",projectId:"PASTE_PROJECT_ID",storageBucket:"PASTE_STORAGE_BUCKET",messagingSenderId:"PASTE_SENDER_ID",appId:"PASTE_APP_ID"};
+// ====================================================
+const FB=!firebaseConfig.apiKey.startsWith("PASTE");
+let auth,db,user=null,unsub=null,sync='',first=true,tm;
+const K='chsl_tracker_v1',START='2026-10-05',END='2026-12-04',OFF=[1,3,7,15,30];
+const SEC=[
+["Reasoning","R",1,["Analogy","Classification / Odd One Out","Number series","Alphabet series","Alpha-numeric series","Letter coding","Number/substitution coding","Matrix coding","Blood relations (direct)","Blood relations (coded)","Direction sense","Ranking & order","Sitting arrangement - Linear","Sitting arrangement - Circular","Syllogism (2-statement)","Syllogism (3-statement)","Venn diagrams","Statement & Conclusion/Assumption","Mirror images","Water images","Paper folding & cutting","Embedded figures","Figure completion / series","Word formation, dictionary order","Puzzles + full reasoning set"]],
+["English","E",26,["Spot the error","Sentence improvement","Tenses","Subject-verb agreement","Articles & determiners","Prepositions","Active-Passive","Direct-Indirect speech","Conjunctions & connectors","One word substitution","Synonyms","Antonyms","Homophones/Homonyms","Spelling correction","Idioms & phrases","Cloze test","Fill in the blanks","RC - fact based","RC - inference based","Para jumbles","Sentence rearrangement","Phrase replacement","Confusable words","Foreign words/phrases","Mixed grammar set","Mixed vocabulary set","Full RC practice (2 passages)","Full English mock section"]],
+["Quant","Q",54,["Number system (LCM, HCF)","Simplification & approximation","Roots, surds & indices","Percentage","Profit, loss & discount","Simple interest","Compound interest","Ratio & proportion","Partnership","Average","Mixture & alligation","Time & work","Pipes & cisterns","Time, speed & distance","Boats & streams","Problems on ages","Algebraic identities","Linear equations","Quadratic equations","Geometry - lines, angles, triangles","Geometry - circles","Geometry - polygons","Mensuration 2D","Mensuration 3D","Trigonometry - ratios & identities","Trigonometry - heights & distances","DI - bar & pie","DI - line & table","Statistics (mean, median, mode)","Mixed arithmetic set","Mixed geometry & mensuration set","Full Quant mock section"]],
+["GA","G",86,["History - Ancient & Medieval","History - Modern & Freedom Struggle","Geography - Physical","Geography - Indian states, rivers","Polity - Constitution, FR/FD","Polity - Parliament, President, Judiciary","Economy basics & Budget","Science - Physics","Science - Chemistry","Science - Biology","Static GK - Books, Awards, Days","Static GK - Sports, Schemes, Orgs","Current Affairs (6-8 months)"]]];
+const T=[];SEC.forEach((s,si)=>s[3].forEach((nm,i)=>T.push({sec:s[0],c:s[1],si,n:s[2]+i,name:nm,pos:(i+.5)/s[3].length})));
+T.sort((a,b)=>a.pos-b.pos||a.si-b.si);
+const TB={};T.forEach(t=>TB[t.n]=t);
+const pad=n=>String(n).padStart(2,'0'),f=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const p=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
+const add=(s,n)=>{const d=p(s);d.setDate(d.getDate()+n);return f(d)};
+const dl=s=>p(s).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+const plan={};let P1END=START;
+(function(){let D=START,i=0;while(i<T.length){if(p(D).getDay()!==0){plan[D]=T.slice(i,i+3).map(t=>t.n);i+=3;P1END=D}D=add(D,1)}})();
+let st={done:{},weak:{}};try{Object.assign(st,JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){}
+const saveLocal=()=>{try{localStorage.setItem(K,JSON.stringify(st))}catch(e){}};
+const push=()=>{if(user)setDoc(doc(db,'users',user.uid),{done:st.done,weak:st.weak,updated:Date.now()}).catch(e=>{sync='Sync error: '+e.code;render()})};
+const save=()=>{saveLocal();if(user){clearTimeout(tm);tm=setTimeout(push,400)}};
+if(FB){const app=initializeApp(firebaseConfig);auth=getAuth(app);db=initializeFirestore(app,{localCache:persistentLocalCache()});
+ onAuthStateChanged(auth,u=>{user=u;if(unsub){unsub();unsub=null}first=true;
+  if(u){sync='Sync ho raha...';unsub=onSnapshot(doc(db,'users',u.uid),s=>{const r=s.exists()?s.data():null;
+   if(first){if(s.metadata.fromCache){render();return}first=false;
+    if(r){for(const k in st.done)if(!(k in(r.done||{})))(r.done=r.done||{})[k]=st.done[k];for(const k in st.weak)if(st.weak[k]&&!(r.weak||{})[k])(r.weak=r.weak||{})[k]=st.weak[k];st={done:r.done||{},weak:r.weak||{}}}
+    saveLocal();push()}
+   else if(!s.metadata.hasPendingWrites&&r){st={done:r.done||{},weak:r.weak||{}};saveLocal()}
+   sync=s.metadata.fromCache?'Offline - net aane par sync hoga':'Synced';render()},e=>{sync='Sync error: '+e.code;render()})}
+  render()})}
+function authBar(){const c='display:flex;justify-content:space-between;align-items:center;gap:8px';
+ if(!FB)return`<div class="card"><small>Firebase config nahi daala - data sirf is phone mein save hai.</small></div>`;
+ if(!user)return`<div class="card" style="${c}"><small>Online save ke liye login karo</small><button class="btn p" data-x="in">Google login</button></div>`;
+ return`<div class="card" style="${c}"><small>${user.displayName||user.email}<br>${sync}</small><button class="btn" data-x="out">Logout</button></div>`}
+const today=()=>f(new Date());
+let view='today',vd=today();
+function tasks(){const L=[];
+ for(const D in plan)plan[D].forEach(id=>L.push({key:'n'+id,due:D,type:'new',id,carry:1}));
+ T.forEach(t=>{const dn=st.done['n'+t.n];if(dn)OFF.forEach((o,k)=>L.push({key:'r'+t.n+'_'+k,due:add(dn,o),type:'rev',id:t.n,k,carry:1}))});
+ const weak=Object.keys(st.weak).filter(k=>st.weak[k]).map(k=>TB[k].name);
+ const SN=["Reasoning","English","Quant","GA"];
+ for(let D=START;D<=END;D=add(D,1)){
+  L.push({key:'c'+D,due:D,type:'ca',carry:0,title:'Current Affairs - 20 min',sub:'Aaj ki 5-6 important news / monthly capsule'});
+  if(D<=P1END){if(p(D).getDay()===0){const w=Math.floor((p(D)-p(START))/6048e5);L.push({key:'s'+D,due:D,type:'test',carry:1,title:'Weekly test: '+SN[w%4]+' sectional',sub:'Timer laga ke + is hafte ke chhute topics catch-up'})}}
+  else{L.push({key:'m'+D,due:D,type:'test',carry:1,title:'Full mock test (60 min)',sub:'Tier 1 pattern: 100 Q, -0.5 negative'});
+   L.push({key:'a'+D,due:D,type:'test',carry:1,title:'Mock analysis + galtiyan copy',sub:weak.length?'Weak topics: '+weak.join(', '):'Galat sawalon ka reason likho, weak topics revise karo'})}}
+ return L}
+function meta(t){if(t.type==='new'){const o=TB[t.id];return{ti:'#'+o.n+' '+o.name,sub:'Padho + 15-20 MCQs',tag:o.sec}}
+ if(t.type==='rev'){const o=TB[t.id];return{ti:'Revise: '+o.name,sub:'Revision '+(t.k+1)+'/5 - quick recap + 10 MCQs',tag:'Revise'}}
+ return{ti:t.title,sub:t.sub,tag:t.type==='ca'?'Daily':'Test'}}
+function row(t,od){const m=meta(t),dn=st.done[t.key];
+ return`<div class="row ${dn?'dn':''} ${od?'od':''} ${t.type==='rev'?'rv':''}"><input type="checkbox" data-k="${t.key}" ${dn?'checked':''}><div><b>${m.ti}</b><small><span class="tag">${m.tag}</span>${od?'<span class="red">due '+dl(t.due)+' - </span>':''}${m.sub}</small></div>${t.type==='new'?`<button class="fl ${st.weak[t.id]?'on':''}" data-w="${t.id}" title="Weak topic">&#9873;</button>`:''}</div>`}
+function bar(a,b){return`<div class="bar"><i style="width:${b?Math.round(100*a/b):0}%"></i></div>`}
+function render(){document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
+ const A=tasks(),td=today(),h=[];
+ if(view==='today'){
+  const day=A.filter(t=>t.due===vd),od=vd===td?A.filter(t=>t.due<td&&t.carry&&!st.done[t.key]).sort((a,b)=>a.due<b.due?-1:1):[];
+  const nd=day.filter(t=>t.type!=='ca').length?day.filter(t=>t.type!=='ca'):[],dd=day.filter(t=>st.done[t.key]).length;
+  h.push(`<div class="nav"><button data-d="-1">&#8249;</button><div style="text-align:center"><h1 style="margin:0">${vd===td?'Aaj - ':''}${dl(vd)}</h1><small style="color:var(--mut)">${day.length?dd+'/'+day.length+' complete':''}</small></div><button data-d="1">&#8250;</button></div>`);
+  if(vd!==td)h.push(`<div style="text-align:center;margin-bottom:8px"><button class="btn" data-d="0">Aaj par wapas</button></div>`);
+  if(od.length)h.push(`<h2 class="red">Pending (${od.length})</h2>`+od.map(t=>row(t,1)).join(''));
+  const gr=(ty,tt)=>{const x=day.filter(t=>t.type===ty);if(x.length)h.push(`<h2>${tt}</h2>`+x.map(t=>row(t)).join(''))};
+  gr('new','Naye topics');gr('rev','Revision');gr('test','Test / Mock');gr('ca','Daily');
+  if(!day.length&&!od.length)h.push(`<div class="card">${vd<START?'Plan '+dl(START)+' se shuru hota hai.':'Is din koi task nahi.'}</div>`);
+ }
+ if(view==='next'){h.push('<h1>Aane wale 7 din</h1>');
+  for(let i=0;i<7;i++){const D=add(td,i),x=A.filter(t=>t.due===D&&t.type!=='ca'&&!st.done[t.key]);
+   h.push(`<div class="card"><b>${dl(D)}</b>${x.length?x.map(t=>`<div class="ln">${t.type==='rev'?'&#8635; ':'&bull; '}${meta(t).ti}</div>`).join(''):'<div class="ln" style="color:var(--mut)">Kuch nahi</div>'}</div>`)}
+  h.push(`<div class="card"><small>Revision tab: jab bhi koi topic tick karoge, uski revision khud 1, 3, 7, 15 aur 30 din baad schedule ho jayegi.</small></div>`)}
+ if(view==='prog'){
+  const nT=T.filter(t=>st.done['n'+t.n]).length,due=T.filter(t=>{for(const D in plan)if(plan[D].includes(t.n))return D<=td}).length,left=Math.max(0,Math.round((p(END)-p(td))/864e5));
+  const dif=nT-due;
+  h.push(`<h1>Progress</h1><div class="card"><b>${nT}/${T.length} topics complete</b>${bar(nT,T.length)}<div>Plan ke hisaab se ${due} hone chahiye: <b class="${dif<0?'red':'grn'}">${dif<0?(-dif)+' peeche':dif+' aage'}</b></div><small>Syllabus end: ${dl(P1END)} | Prep end: ${dl(END)} (${left} din baaki)</small></div>`);
+  SEC.forEach(s=>{const x=T.filter(t=>t.sec===s[0]),d=x.filter(t=>st.done['n'+t.n]).length;
+   h.push(`<div class="card"><b>${s[0]}</b> <small>${d}/${x.length}</small>${bar(d,x.length)}<details><summary>Topics</summary>${x.map(t=>`<div class="row" style="margin-top:6px"><input type="checkbox" data-k="n${t.n}" ${st.done['n'+t.n]?'checked':''}><div><b>#${t.n} ${t.name}</b></div><button class="fl ${st.weak[t.n]?'on':''}" data-w="${t.n}">&#9873;</button></div>`).join('')}</details></div>`)});
+  h.push(`<h2>Backup (phone data clear ho to kaam aayega)</h2><textarea id="bk" placeholder="Export dabao, ye text kahin save kar lo"></textarea><div style="display:flex;gap:8px;margin-top:6px"><button class="btn p" data-x="e">Export</button><button class="btn" data-x="i">Import</button></div><small style="color:var(--mut)">&#9873; = weak topic. Mock analysis task mein ye topics dikhenge.</small>`)}
+ document.getElementById('app').innerHTML=authBar()+h.join('')}
+document.addEventListener('change',e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;if(e.target.checked)st.done[k]=today();else delete st.done[k];save();render()});
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+ if(d.v){view=d.v;render()}else if(d.d!==undefined){vd=d.d==='0'?today():add(vd,+d.d);render()}
+ else if(d.w){st.weak[d.w]=!st.weak[d.w];save();render()}
+ else if(d.x==='in'){const pr=new GoogleAuthProvider();signInWithPopup(auth,pr).catch(e=>{if(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment')signInWithRedirect(auth,pr)})}else if(d.x==='out'){signOut(auth)}
+ else if(d.x==='e'){document.getElementById('bk').value=JSON.stringify(st)}
+ else if(d.x==='i'){try{const o=JSON.parse(document.getElementById('bk').value);if(o.done){st={done:o.done,weak:o.weak||{}};save();render()}}catch(x){}}});
+render();
+</script></body></html>
