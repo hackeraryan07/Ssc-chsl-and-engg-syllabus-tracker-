@@ -31,7 +31,7 @@ import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase
 import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import {initializeFirestore,persistentLocalCache,doc,setDoc,onSnapshot} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 // ====== APNA FIREBASE CONFIG YAHAN PASTE KARO ======
-const firebaseConfig={apiKey:"PASTE_API_KEY",authDomain:"PASTE_AUTH_DOMAIN",projectId:"PASTE_PROJECT_ID",storageBucket:"PASTE_STORAGE_BUCKET",messagingSenderId:"PASTE_SENDER_ID",appId:"PASTE_APP_ID"};
+const firebaseConfig={apiKey:"AIzaSyAuWfcGX-1Mq1fhLeoJN2SvMixachLTkxQ",authDomain:"ssc-syllabus-tracker.firebaseapp.com",projectId:"ssc-syllabus-tracker",storageBucket:"ssc-syllabus-tracker.firebasestorage.app",messagingSenderId:"55437305110",appId:"1:55437305110:web:b8f3d256bd878b41669c37",measurementId:"G-G4KWQSMT7K"};
 // ====================================================
 const FB=!firebaseConfig.apiKey.startsWith("PASTE");
 let auth,db,user=null,unsub=null,sync='',first=true,tm;
