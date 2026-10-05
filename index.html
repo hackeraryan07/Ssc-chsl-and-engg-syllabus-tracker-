@@ -35,7 +35,7 @@ const firebaseConfig={apiKey:"AIzaSyAuWfcGX-1Mq1fhLeoJN2SvMixachLTkxQ",authDomai
 // ====================================================
 const FB=!firebaseConfig.apiKey.startsWith("PASTE");
 let auth,db,user=null,unsub=null,sync='',first=true,tm;
-const K='chsl_tracker_v1',START='2026-10-05',END='2026-12-04',OFF=[1,3,7,15,30];
+const K='chsl_tracker_v1',START='2026-10-05',END='2027-02-28',OFF=[1,3,7,15,30];
 const SEC=[
 ["Reasoning","R",1,["Analogy","Classification / Odd One Out","Number series","Alphabet series","Alpha-numeric series","Letter coding","Number/substitution coding","Matrix coding","Blood relations (direct)","Blood relations (coded)","Direction sense","Ranking & order","Sitting arrangement - Linear","Sitting arrangement - Circular","Syllogism (2-statement)","Syllogism (3-statement)","Venn diagrams","Statement & Conclusion/Assumption","Mirror images","Water images","Paper folding & cutting","Embedded figures","Figure completion / series","Word formation, dictionary order","Puzzles + full reasoning set"]],
 ["English","E",26,["Spot the error","Sentence improvement","Tenses","Subject-verb agreement","Articles & determiners","Prepositions","Active-Passive","Direct-Indirect speech","Conjunctions & connectors","One word substitution","Synonyms","Antonyms","Homophones/Homonyms","Spelling correction","Idioms & phrases","Cloze test","Fill in the blanks","RC - fact based","RC - inference based","Para jumbles","Sentence rearrangement","Phrase replacement","Confusable words","Foreign words/phrases","Mixed grammar set","Mixed vocabulary set","Full RC practice (2 passages)","Full English mock section"]],
@@ -68,6 +68,17 @@ const ENG=[["M1","Maths-I","Rolle's + Mean Value Theorems (Lagrange, Cauchy)","2
 ["C4","FPL (C)","[Unit II] Operators: arithmetic, relational, logical, assignment, inc/dec, conditional, bitwise, special","2026-10-16"],
 ["C5","FPL (C)","[Unit II] Expressions, evaluation, precedence & associativity, math functions + infix/prefix/postfix + 3-4 programs","2026-10-16"]];
 const ENGREV=[["2026-10-17","Maths-I"],["2026-10-17","Physics"],["2026-10-18","BEE"],["2026-10-18","Eng Graphics"],["2026-10-19","FPL (C)"]];
+const DP=[["sq","Squares","Squares 1 se 30","5 min - bolke/likhke, timer laga ke, galti ginti rakho"],
+["cu","Cubes","Cubes 1 se 30","5 min - bolke/likhke, timer laga ke, galti ginti rakho"],
+["tb","Tables","Tables 1 se 25","5 min - random 8-10 tables bolo, baaki weekly revise"],
+["rt","Roots","Square root + cube root","5 min - perfect squares ke roots (1-900) aur cube roots (1-30)"],
+["fp","Fraction to %","Fraction-percentage table","3 min - 1/2 se 1/20 ke %, 2/3, 3/4, 5/6, 7/8 jaise common ones"],
+["pr","Prime numbers","Prime numbers 1 se 100","3 min - 25 primes yaad rakho, 1-2 number prime hai ya nahi check karo"],
+["al","Alphabet","Alphabet position + opposite letters","3 min - A=1...Z=26, opposite pairs (A-Z, B-Y), EJOTY, FHKNQ"],
+["vo","Vocabulary","10 new words (synonym + antonym)","10 min - 10 naye words + kal ke 10 ka quick revise"],
+["id","Idioms + One word","5 idioms + 5 one-word substitutions","5 min - meaning + ek sentence mein use likho"],
+["gk","Static GK","Static GK - 10 questions","10 min - books, awards, days, capitals, schemes (quiz/notes se)"],
+["ty","Typing","Typing practice","10 min - speed + accuracy, Tier 2 typing/skill test ke liye"]];
 const T=[];SEC.forEach((s,si)=>s[3].forEach((nm,i)=>T.push({sec:s[0],c:s[1],si,n:s[2]+i,name:nm,pos:(i+.5)/s[3].length})));
 T.sort((a,b)=>a.pos-b.pos||a.si-b.si);
 const TB={};T.forEach(t=>TB[t.n]=t);
@@ -103,6 +114,7 @@ function tasks(){const L=[];
  const SN=["Reasoning","English","Quant","GA"];
  for(let D=START;D<=END;D=add(D,1)){
   L.push({key:'c'+D,due:D,type:'ca',carry:0,title:'Current Affairs - 20 min',sub:'Aaj ki 5-6 important news / monthly capsule'});
+  DP.forEach(d=>L.push({key:'d'+d[0]+D,due:D,type:'dp',dp:d[0],carry:0,tag:d[1],title:d[2],sub:d[3]}));
   if(D<=P1END){if(p(D).getDay()===0){const w=Math.floor((p(D)-p(START))/6048e5);L.push({key:'s'+D,due:D,type:'test',carry:1,title:'Weekly test: '+SN[w%4]+' sectional',sub:'Timer laga ke + is hafte ke chhute topics catch-up'})}}
   else{L.push({key:'m'+D,due:D,type:'test',carry:1,title:'Full mock test (60 min)',sub:'Tier 1 pattern: 100 Q, -0.5 negative'});
    L.push({key:'a'+D,due:D,type:'test',carry:1,title:'Mock analysis + galtiyan copy',sub:weak.length?'Weak topics: '+weak.join(', '):'Galat sawalon ka reason likho, weak topics revise karo'})}}
@@ -127,11 +139,11 @@ function render(){document.querySelectorAll('.tabs button').forEach(b=>b.classLi
   if(vd!==td)h.push(`<div style="text-align:center;margin-bottom:8px"><button class="btn" data-d="0">Aaj par wapas</button></div>`);
   if(od.length)h.push(`<h2 class="red">Pending (${od.length})</h2>`+od.map(t=>row(t,1)).join(''));
   const gr=(ty,tt)=>{const x=day.filter(t=>t.type===ty);if(x.length)h.push(`<h2>${tt}</h2>`+x.map(t=>row(t)).join(''))};
-  {const eg=day.filter(t=>t.g==='eng');if(eg.length)h.push('<h2>Engineering - Unit Test 1</h2>'+eg.map(t=>row(t)).join(''))}gr('new','Naye topics');gr('rev','Revision');gr('test','Test / Mock');gr('ca','Daily');
+  {const eg=day.filter(t=>t.g==='eng');if(eg.length)h.push('<h2>Engineering - Unit Test 1</h2>'+eg.map(t=>row(t)).join(''))}gr('new','Naye topics');gr('rev','Revision');gr('test','Test / Mock');DP.forEach(d=>{const x=day.filter(t=>t.dp===d[0]);if(x.length)h.push(`<h2>Daily Practice - ${d[1]}</h2>`+x.map(t=>row(t)).join(''))});gr('ca','Daily');
   if(!day.length&&!od.length)h.push(`<div class="card">${vd<START?'Plan '+dl(START)+' se shuru hota hai.':'Is din koi task nahi.'}</div>`);
  }
  if(view==='next'){h.push('<h1>Aane wale 7 din</h1>');
-  for(let i=0;i<7;i++){const D=add(td,i),x=A.filter(t=>t.due===D&&t.type!=='ca'&&!st.done[t.key]);
+  for(let i=0;i<7;i++){const D=add(td,i),x=A.filter(t=>t.due===D&&t.type!=='ca'&&t.type!=='dp'&&!st.done[t.key]);
    h.push(`<div class="card"><b>${dl(D)}</b>${x.length?x.map(t=>`<div class="ln">${t.type==='rev'?'&#8635; ':'&bull; '}${meta(t).ti}</div>`).join(''):'<div class="ln" style="color:var(--mut)">Kuch nahi</div>'}</div>`)}
   h.push(`<div class="card"><small>Revision tab: jab bhi koi topic tick karoge, uski revision khud 1, 3, 7, 15 aur 30 din baad schedule ho jayegi.</small></div>`)}
  if(view==='prog'){
@@ -139,6 +151,7 @@ function render(){document.querySelectorAll('.tabs button').forEach(b=>b.classLi
   const dif=nT-due;
   h.push(`<h1>Progress</h1><div class="card"><b>${nT}/${T.length} topics complete</b>${bar(nT,T.length)}<div>Plan ke hisaab se ${due} hone chahiye: <b class="${dif<0?'red':'grn'}">${dif<0?(-dif)+' peeche':dif+' aage'}</b></div><small>Syllabus end: ${dl(P1END)} | Prep end: ${dl(END)} (${left} din baaki)</small></div>`);
   {const en=ENG.filter(e=>st.done['e'+e[0]]).length,dd=Math.max(0,Math.round((p('2026-10-20')-p(td))/864e5));h.push(`<div class="card"><b>Engineering Unit Test 1 (Unit I + II): ${en}/${ENG.length} chunks</b>${bar(en,ENG.length)}<small>Mock test 20 Oct (${dd} din baaki)</small></div>`)}
+  {const last=td<START?null:(td>END?END:td);let rw='';DP.forEach(d=>{let n=0,tt=0;if(last)for(let D=START;D<=last;D=add(D,1)){tt++;if(st.done['d'+d[0]+D])n++}rw+=`<div class="ln"><b>${d[1]}</b> <small>${n}/${tt} din</small>${bar(n,tt)}</div>`});h.push(`<div class="card"><b>Daily Practice</b>${rw}</div>`)}
   SEC.forEach(s=>{const x=T.filter(t=>t.sec===s[0]),d=x.filter(t=>st.done['n'+t.n]).length;
    h.push(`<div class="card"><b>${s[0]}</b> <small>${d}/${x.length}</small>${bar(d,x.length)}<details><summary>Topics</summary>${x.map(t=>`<div class="row" style="margin-top:6px"><input type="checkbox" data-k="n${t.n}" ${st.done['n'+t.n]?'checked':''}><div><b>#${t.n} ${t.name}</b></div><button class="fl ${st.weak[t.n]?'on':''}" data-w="${t.n}">&#9873;</button></div>`).join('')}</details></div>`)});
   h.push(`<h2>Backup (phone data clear ho to kaam aayega)</h2><textarea id="bk" placeholder="Export dabao, ye text kahin save kar lo"></textarea><div style="display:flex;gap:8px;margin-top:6px"><button class="btn p" data-x="e">Export</button><button class="btn" data-x="i">Import</button></div><small style="color:var(--mut)">&#9873; = weak topic. Mock analysis task mein ye topics dikhenge.</small>`)}
