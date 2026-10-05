@@ -41,12 +41,33 @@ const SEC=[
 ["English","E",26,["Spot the error","Sentence improvement","Tenses","Subject-verb agreement","Articles & determiners","Prepositions","Active-Passive","Direct-Indirect speech","Conjunctions & connectors","One word substitution","Synonyms","Antonyms","Homophones/Homonyms","Spelling correction","Idioms & phrases","Cloze test","Fill in the blanks","RC - fact based","RC - inference based","Para jumbles","Sentence rearrangement","Phrase replacement","Confusable words","Foreign words/phrases","Mixed grammar set","Mixed vocabulary set","Full RC practice (2 passages)","Full English mock section"]],
 ["Quant","Q",54,["Number system (LCM, HCF)","Simplification & approximation","Roots, surds & indices","Percentage","Profit, loss & discount","Simple interest","Compound interest","Ratio & proportion","Partnership","Average","Mixture & alligation","Time & work","Pipes & cisterns","Time, speed & distance","Boats & streams","Problems on ages","Algebraic identities","Linear equations","Quadratic equations","Geometry - lines, angles, triangles","Geometry - circles","Geometry - polygons","Mensuration 2D","Mensuration 3D","Trigonometry - ratios & identities","Trigonometry - heights & distances","DI - bar & pie","DI - line & table","Statistics (mean, median, mode)","Mixed arithmetic set","Mixed geometry & mensuration set","Full Quant mock section"]],
 ["GA","G",86,["History - Ancient & Medieval","History - Modern & Freedom Struggle","Geography - Physical","Geography - Indian states, rivers","Polity - Constitution, FR/FD","Polity - Parliament, President, Judiciary","Economy basics & Budget","Science - Physics","Science - Chemistry","Science - Biology","Static GK - Books, Awards, Days","Static GK - Sports, Schemes, Orgs","Current Affairs (6-8 months)"]]];
-const ENG=[["M1","Maths-I","Rolle's + Mean Value Theorems (Lagrange, Cauchy)","2026-10-05"],["M2","Maths-I","Taylor's & Maclaurin's series + Indeterminate forms, L'Hospital's rule","2026-10-05"],["M3","Maths-I","Fourier series (full & half range) + Harmonic analysis","2026-10-06"],
-["P1","Physics","Laser basics: emission, population inversion, pumping, resonant cavity, characteristics","2026-10-07"],["P2","Physics","CO2 laser + applications + Holography","2026-10-07"],["P3","Physics","Optical fibers: angles, NA, TIR, classification, attenuation + numericals","2026-10-08"],
-["E1","BEE","Resistance, EMF, current, PD, Ohm's law + power system overview","2026-10-09"],["E2","BEE","DC network classification, series-parallel, star-delta","2026-10-09"],["E3","BEE","Kirchhoff's laws (loop analysis) + Superposition + numericals","2026-10-10"],
-["G1","Eng Graphics","Instruments, sheet layout, lines, dimensioning + projection of points","2026-10-11"],["G2","Eng Graphics","Line parallel to both planes + perpendicular to one plane","2026-10-11"],["G3","Eng Graphics","Line inclined to one/parallel to other + inclined to both (first angle)","2026-10-12"],
-["C1","FPL (C)","Algorithms, flowcharts + C overview (history, character set, tokens)","2026-10-13"],["C2","FPL (C)","Keywords, identifiers, constants, variables, data types, declarations","2026-10-13"],["C3","FPL (C)","Storage class, symbolic constants, const/volatile, compilation + write 3-4 programs","2026-10-14"]];
-const ENGREV=[["2026-10-15","Maths-I"],["2026-10-16","Physics"],["2026-10-17","BEE"],["2026-10-18","Eng Graphics"],["2026-10-19","FPL (C)"]];
+const ENG=[["M1","Maths-I","Rolle's + Mean Value Theorems (Lagrange, Cauchy)","2026-10-05"],
+["M2","Maths-I","Taylor's & Maclaurin's series + Indeterminate forms, L'Hospital's rule","2026-10-05"],
+["M3","Maths-I","Fourier series (full & half range) + Harmonic analysis","2026-10-06"],
+["M4","Maths-I","[Unit II] Functions of several variables, limit, continuity, partial derivatives, Euler's theorem on homogeneous functions","2026-10-06"],
+["M5","Maths-I","[Unit II] Partial derivative of composite function, total derivative, change of independent variables","2026-10-07"],
+["P1","Physics","Laser basics: emission, population inversion, pumping, resonant cavity, characteristics","2026-10-07"],
+["P2","Physics","CO2 laser + applications + Holography","2026-10-08"],
+["P3","Physics","Optical fibers: angles, NA, TIR, classification, attenuation + numericals","2026-10-08"],
+["P4","Physics","[Unit II] de Broglie hypothesis, matter waves, wave function, probability density + numericals","2026-10-09"],
+["P5","Physics","[Unit II] Schrodinger time-independent & time-dependent equations, particle in a rigid box + numericals","2026-10-09"],
+["P6","Physics","[Unit II] Quantum tunneling, alpha decay, STM, quantum computing (qubit, superposition, entanglement)","2026-10-10"],
+["E1","BEE","Resistance, EMF, current, PD, Ohm's law + power system overview","2026-10-10"],
+["E2","BEE","DC network classification, series-parallel, star-delta","2026-10-11"],
+["E3","BEE","Kirchhoff's laws (loop analysis) + Superposition + numericals","2026-10-11"],
+["E4","BEE","[Unit II] Magnetic circuit: flux density, MMF, reluctance, series magnetic circuit, electric vs magnetic circuit","2026-10-12"],
+["E5","BEE","[Unit II] Faraday's laws, Fleming's right-hand rule, induced EMF, self & mutual inductance, coupling coefficient, energy stored","2026-10-12"],
+["G1","Eng Graphics","Instruments, sheet layout, lines, dimensioning + projection of points","2026-10-13"],
+["G2","Eng Graphics","Line parallel to both planes + perpendicular to one plane","2026-10-13"],
+["G3","Eng Graphics","Line inclined to one/parallel to other + inclined to both (first angle)","2026-10-13"],
+["G4","Eng Graphics","[Unit II] Projection of plane: parallel to one & perpendicular to other + practice sheet","2026-10-14"],
+["G5","Eng Graphics","[Unit II] Plane inclined to one & perpendicular to other, inclined to both planes + practice sheet","2026-10-14"],
+["C1","FPL (C)","Algorithms, flowcharts + C overview (history, character set, tokens)","2026-10-15"],
+["C2","FPL (C)","Keywords, identifiers, constants, variables, data types, declarations","2026-10-15"],
+["C3","FPL (C)","Storage class, symbolic constants, const/volatile, compilation + write 3-4 programs","2026-10-15"],
+["C4","FPL (C)","[Unit II] Operators: arithmetic, relational, logical, assignment, inc/dec, conditional, bitwise, special","2026-10-16"],
+["C5","FPL (C)","[Unit II] Expressions, evaluation, precedence & associativity, math functions + infix/prefix/postfix + 3-4 programs","2026-10-16"]];
+const ENGREV=[["2026-10-17","Maths-I"],["2026-10-17","Physics"],["2026-10-18","BEE"],["2026-10-18","Eng Graphics"],["2026-10-19","FPL (C)"]];
 const T=[];SEC.forEach((s,si)=>s[3].forEach((nm,i)=>T.push({sec:s[0],c:s[1],si,n:s[2]+i,name:nm,pos:(i+.5)/s[3].length})));
 T.sort((a,b)=>a.pos-b.pos||a.si-b.si);
 const TB={};T.forEach(t=>TB[t.n]=t);
@@ -87,9 +108,9 @@ function tasks(){const L=[];
    L.push({key:'a'+D,due:D,type:'test',carry:1,title:'Mock analysis + galtiyan copy',sub:weak.length?'Weak topics: '+weak.join(', '):'Galat sawalon ka reason likho, weak topics revise karo'})}}
  ENG.forEach(e=>{L.push({key:'e'+e[0],due:e[3],type:'eng',g:'eng',carry:1,tag:e[1],title:e[2],sub:'Padho + notes + 5-10 numericals/practice questions'});
   const dn=st.done['e'+e[0]];if(dn)[1,5].forEach((o,k)=>{const d=add(dn,o);if(d<='2026-10-19')L.push({key:'er'+e[0]+'_'+k,due:d,type:'engr',g:'eng',carry:1,tag:'Eng Revise',title:'Recap: '+e[2],sub:'15 min recap + 3-4 questions ('+(k+1)+'/2)'})})});
- L.push({key:'eB',due:'2026-10-14',type:'engt',g:'eng',carry:1,tag:'Eng',title:'Buffer: pending chunks + mixed practice',sub:'Jo chunk reh gaya wo pura karo, baaki time previous year questions'});
- ENGREV.forEach(r=>L.push({key:'ev'+r[0],due:r[0],type:'engt',g:'eng',carry:1,tag:r[1],title:'Full revision: '+r[1],sub:'Saare Unit I topics + numericals / previous year questions'+(r[1]==='Eng Graphics'?' + 2-3 projection problems':r[1]==='FPL (C)'?' + practice programs':'')}));
- L.push({key:'em',due:'2026-10-20',type:'engt',g:'eng',carry:1,tag:'Eng Mock',title:'FULL MOCK Unit Test (5 subjects, timed)',sub:'Har subject ka Unit I time laga ke, phir galtiyan revise karo'});
+ L.push({key:'eB',due:'2026-10-16',type:'engt',g:'eng',carry:1,tag:'Eng',title:'Buffer: pending chunks + mixed practice',sub:'Jo chunk reh gaya wo pura karo, baaki time previous year questions'});
+ ENGREV.forEach(r=>L.push({key:'ev'+r[0],due:r[0],type:'engt',g:'eng',carry:1,tag:r[1],title:'Full revision: '+r[1],sub:'Saare Unit I + Unit II topics + numericals / previous year questions'+(r[1]==='Eng Graphics'?' + 2-3 projection problems':r[1]==='FPL (C)'?' + practice programs':'')}));
+ L.push({key:'em',due:'2026-10-20',type:'engt',g:'eng',carry:1,tag:'Eng Mock',title:'FULL MOCK Unit Test (5 subjects, timed)',sub:'Har subject ka Unit I + II time laga ke, phir galtiyan revise karo'});
  return L}
 function meta(t){if(t.type==='new'){const o=TB[t.id];return{ti:'#'+o.n+' '+o.name,sub:'Padho + 15-20 MCQs',tag:o.sec}}
  if(t.type==='rev'){const o=TB[t.id];return{ti:'Revise: '+o.name,sub:'Revision '+(t.k+1)+'/5 - quick recap + 10 MCQs',tag:'Revise'}}
@@ -117,7 +138,7 @@ function render(){document.querySelectorAll('.tabs button').forEach(b=>b.classLi
   const nT=T.filter(t=>st.done['n'+t.n]).length,due=T.filter(t=>{for(const D in plan)if(plan[D].includes(t.n))return D<=td}).length,left=Math.max(0,Math.round((p(END)-p(td))/864e5));
   const dif=nT-due;
   h.push(`<h1>Progress</h1><div class="card"><b>${nT}/${T.length} topics complete</b>${bar(nT,T.length)}<div>Plan ke hisaab se ${due} hone chahiye: <b class="${dif<0?'red':'grn'}">${dif<0?(-dif)+' peeche':dif+' aage'}</b></div><small>Syllabus end: ${dl(P1END)} | Prep end: ${dl(END)} (${left} din baaki)</small></div>`);
-  {const en=ENG.filter(e=>st.done['e'+e[0]]).length,dd=Math.max(0,Math.round((p('2026-10-20')-p(td))/864e5));h.push(`<div class="card"><b>Engineering Unit Test 1: ${en}/${ENG.length} chunks</b>${bar(en,ENG.length)}<small>Mock test 20 Oct (${dd} din baaki)</small></div>`)}
+  {const en=ENG.filter(e=>st.done['e'+e[0]]).length,dd=Math.max(0,Math.round((p('2026-10-20')-p(td))/864e5));h.push(`<div class="card"><b>Engineering Unit Test 1 (Unit I + II): ${en}/${ENG.length} chunks</b>${bar(en,ENG.length)}<small>Mock test 20 Oct (${dd} din baaki)</small></div>`)}
   SEC.forEach(s=>{const x=T.filter(t=>t.sec===s[0]),d=x.filter(t=>st.done['n'+t.n]).length;
    h.push(`<div class="card"><b>${s[0]}</b> <small>${d}/${x.length}</small>${bar(d,x.length)}<details><summary>Topics</summary>${x.map(t=>`<div class="row" style="margin-top:6px"><input type="checkbox" data-k="n${t.n}" ${st.done['n'+t.n]?'checked':''}><div><b>#${t.n} ${t.name}</b></div><button class="fl ${st.weak[t.n]?'on':''}" data-w="${t.n}">&#9873;</button></div>`).join('')}</details></div>`)});
   h.push(`<h2>Backup (phone data clear ho to kaam aayega)</h2><textarea id="bk" placeholder="Export dabao, ye text kahin save kar lo"></textarea><div style="display:flex;gap:8px;margin-top:6px"><button class="btn p" data-x="e">Export</button><button class="btn" data-x="i">Import</button></div><small style="color:var(--mut)">&#9873; = weak topic. Mock analysis task mein ye topics dikhenge.</small>`)}
